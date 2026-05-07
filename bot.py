@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+from datetime import datetime, timezone
 
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 NOTIFIED_FILE   = "notified.json"
@@ -19,14 +20,18 @@ def save_notified(data):
 def send_discord(game):
     payload = {
         "embeds": [{
-            "title": f"🎮 {game['name']}",
+            "title": game['name'],                    # ✅ เอา emoji ออก
             "url": game["url"],
             "color": 0x1b2838,
+            "timestamp": datetime.now(timezone.utc).isoformat(),  # ✅ แก้ timestamp
             "fields": [
-                {"name": "ส่วนลด",  "value": f"**{game['discount']}% OFF**",                              "inline": True},
+                {"name": "ส่วนลด",  "value": f"**{game['discount']}% OFF**",                                      "inline": True},
                 {"name": "ราคา",    "value": f"~~฿{game['original_price']:.0f}~~ → **฿{game['final_price']:.0f}**", "inline": True},
             ],
-            "thumbnail": {"url": f"https://cdn.cloudflare.steamstatic.com/steam/apps/{game['id']}/header.jpg"},
+            "image": {                                # ✅ ย้าย header มาเป็น banner ใหญ่
+                "url": f"https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/{game['id']}/header.jpg"
+            },
+                                                      # ✅ ลบ thumbnail ออกแล้ว
             "footer": {"text": "Steam Sale Alert"}
         }]
     }
