@@ -5,6 +5,9 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
@@ -17,7 +20,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: notified.json
-          key: notified-cache
+          key: notified-${{ github.run_id }}
           restore-keys: notified-
 
       - name: Install dependencies
@@ -32,4 +35,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: notified.json
-          key: notified-cache
+          key: notified-${{ github.run_id }}
