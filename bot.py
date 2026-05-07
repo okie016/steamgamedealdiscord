@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 NOTIFIED_FILE   = "notified.json"
-MIN_DISCOUNT    = 50  # แจ้งเฉพาะลด >= 50% (แก้ตรงนี้ได้)
+MIN_DISCOUNT    = 10  # แจ้งเฉพาะลด >= 50% (แก้ตรงนี้ได้)
 
 def load_notified():
     if os.path.exists(NOTIFIED_FILE):
