@@ -28,9 +28,7 @@ def send_discord(game):
                 {"name": "ส่วนลด",  "value": f"**{game['discount']}% OFF**",                                      "inline": True},
                 {"name": "ราคา",    "value": f"~~฿{game['original_price']:.0f}~~ → **฿{game['final_price']:.0f}**", "inline": True},
             ],
-            "image": {                                # ✅ ย้าย header มาเป็น banner ใหญ่
-                "url": f"https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/{game['id']}/header.jpg"
-            },
+            "image": {"url": game["image"]},
                                                       # ✅ ลบ thumbnail ออกแล้ว
             "footer": {"text": "Steam Sale Alert"}
         }]
