@@ -58,23 +58,16 @@ def get_steam_deals():
             })
     return deals
 
-def main():
-    notified    = load_notified()
-    deals       = get_steam_deals()
-    new_notified = list(notified)
-
-    sent = 0
-    for game in deals:
-        if game["id"] in notified:
-            print(f"Skip (already sent): {game['name']}")
-            continue
-        send_discord(game)
-        new_notified.append(game["id"])
-        print(f"✅ Sent: {game['name']} -{game['discount']}%")
-        sent += 1
-
-    save_notified(new_notified)
-    print(f"\nDone — {sent} new deal(s) sent out of {len(deals)} found.")
+def test_discord():
+    send_discord({
+        "id": "1245620",
+        "name": "Elden Ring",
+        "discount": 75,
+        "final_price": 374,
+        "original_price": 1499,
+        "url": "https://store.steampowered.com/app/1245620/",
+    })
+    print("Test sent!")
 
 if __name__ == "__main__":
-    main()
+    test_discord()   # ← เปลี่ยนชั่วคราว (ปกติคือ main())
