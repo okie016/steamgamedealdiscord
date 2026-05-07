@@ -1,3 +1,4 @@
+import time
 import requests
 import json
 import os
@@ -71,6 +72,7 @@ def main():
         new_notified.append(game["id"])
         print(f"✅ Sent: {game['name']} -{game['discount']}%")
         sent += 1
+        time.sleep(2)  # ← เพิ่มบรรทัดนี้
 
     save_notified(new_notified)
     print(f"\nDone — {sent} new deal(s) sent out of {len(deals)} found.")
