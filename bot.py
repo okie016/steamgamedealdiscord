@@ -55,6 +55,7 @@ def get_steam_deals():
                 "final_price":    item["final_price"] / 100,
                 "original_price": item["original_price"] / 100,
                 "url":            f"https://store.steampowered.com/app/{item['id']}/",
+                "image":          item.get("large_capsule_image", ""),  # ← ดึง URL ตรงจาก API
             })
     return deals
 
