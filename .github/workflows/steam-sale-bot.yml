@@ -1,0 +1,51 @@
+name: Steam Sale Bot
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: steam-sale-bot
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run bot
+        run: python bot.py
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+      # notified.json ถูก commit กลับเข้า repo แทนการเก็บใน cache
+      # ได้สองอย่าง: state ไม่หายเวลา cache หมดอายุ และ repo มีความเคลื่อนไหว
+      # ตลอด GitHub เลยไม่ปิด scheduled workflow ทิ้งเพราะ inactivity 60 วัน
+      - name: Commit state
+        run: |
+          # ถ้าไม่มีดีลใหม่มานานเกิน 7 วัน ให้แตะ keepalive เพื่อบังคับให้มี commit
+          last_commit=$(git log -1 --format=%ct)
+          if [ $(( $(date +%s) - last_commit )) -gt 604800 ]; then
+            date -u +'%Y-%m-%dT%H:%M:%SZ' > .github/keepalive
+          fi
+
+          git add notified.json .github/keepalive
+          if git diff --staged --quiet; then
+            echo "No state change — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update notified state [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

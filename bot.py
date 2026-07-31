@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 NOTIFIED_FILE   = "notified.json"
-MIN_DISCOUNT    = 10  # แจ้งเฉพาะลด >= 50% (แก้ตรงนี้ได้)
+MIN_DISCOUNT    = 10  # แจ้งเฉพาะลด >= 10% (แก้ตรงนี้ได้)
 
 def load_notified():
     if os.path.exists(NOTIFIED_FILE):
@@ -15,8 +15,10 @@ def load_notified():
     return []
 
 def save_notified(data):
+    # เรียง + ตัดตัวซ้ำ เพื่อให้ diff ตอน commit กลับเข้า repo อ่านง่าย
     with open(NOTIFIED_FILE, "w") as f:
-        json.dump(data, f)
+        json.dump(sorted(set(data)), f, indent=1)
+        f.write("\n")
 
 def send_discord(game):
     payload = {
